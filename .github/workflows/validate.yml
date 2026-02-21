@@ -1,0 +1,82 @@
+name: Validate & Deploy
+
+on:
+  pull_request:
+    paths:
+      - 'registry/**'
+      - 'scripts/**'
+  push:
+    branches:
+      - main
+    paths:
+      - 'registry/**'
+      - 'docs/**'
+      - 'scripts/**'
+
+jobs:
+  validate:
+    name: Validate Extensions
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Run validator
+        run: bun scripts/validate.ts
+
+  build-index:
+    name: Rebuild extensions.json
+    runs-on: ubuntu-latest
+    needs: validate
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Rebuild index
+        run: bun scripts/build-index.ts
+
+      - name: Commit updated extensions.json
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: 'chore: rebuild extensions.json [skip ci]'
+          file_pattern: registry/extensions.json
+
+  deploy-docs:
+    name: Deploy Docs
+    runs-on: ubuntu-latest
+    needs: validate
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        working-directory: docs
+        run: bun install
+
+      - name: Build docs
+        working-directory: docs
+        run: bun run build
+        env:
+          NODE_ENV: production
+
+      # Uncomment and configure for Vercel deployment:
+      # - name: Deploy to Vercel
+      #   uses: amondnet/vercel-action@v25
+      #   with:
+      #     vercel-token: ${{ secrets.VERCEL_TOKEN }}
+      #     vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+      #     vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+      #     working-directory: docs
