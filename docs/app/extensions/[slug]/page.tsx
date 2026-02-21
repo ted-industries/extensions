@@ -27,7 +27,7 @@ export default async function ExtensionPage({ params }: { params: Promise<{ slug
     const readme = getReadme(slug);
 
     return (
-        <main className="min-h-screen bg-black text-white">
+        <main data-marketplace className="min-h-screen bg-black text-white">
             <div className="max-w-5xl mx-auto px-6 py-16">
                 {/* Back */}
                 <Link

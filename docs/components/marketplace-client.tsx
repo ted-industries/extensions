@@ -192,7 +192,7 @@ export default function MarketplacePage({
     });
 
     return (
-        <main className="relative min-h-screen bg-black text-white overflow-hidden">
+        <main data-marketplace className="relative min-h-screen bg-black text-white overflow-hidden">
             <DitherCanvas />
 
             <div className="relative z-10 max-w-5xl mx-auto px-6 py-20">

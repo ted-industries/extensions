@@ -7,20 +7,66 @@
   --font-mono: 'JetBrains Mono', 'Fira Code', ui-monospace, monospace;
 }
 
-html {
-  background: #000;
-  color: #fff;
-  color-scheme: dark;
-}
-
-body {
-  background: #000;
-}
-
-/* Override fumadocs theme for marketplace pages */
-[data-marketplace] {
+/* Document-wide variables to prevent blue highlights and dark text */
+:root {
+  --fd-primary: 0 0% 100%;
+  /* Force white as primary color (removes blue links) */
+  --fd-primary-foreground: 0 0% 0%;
   --fd-background: 0 0% 0%;
   --fd-foreground: 0 0% 100%;
+  --fd-muted: 0 0% 12%;
+  --fd-muted-foreground: 0 0% 60%;
+  --fd-border: 0 0% 15%;
+}
+
+/* Hard reset for headings (handles Fumadocs internal anchor links) */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+[class*='heading'],
+article a {
+  color: white !important;
+  text-decoration-color: #404040 !important;
+}
+
+/* Ensure headings aren't blue when hovered */
+article a:hover {
+  color: white !important;
+}
+
+/* Restore content visibility */
+article p,
+article li,
+article td,
+article th,
+.fd-prose p,
+.fd-prose li {
+  color: #a3a3a3 !important;
+  /* Neutral-400 */
+}
+
+/* Code blocks and inline code */
+article code,
+.fd-prose code {
+  color: #d4d4d4 !important;
+  /* Neutral-300 */
+  background-color: #171717 !important;
+  /* Neutral-900 */
+  padding: 0.1rem 0.3rem !important;
+}
+
+/* Table fixes */
+article table,
+.fd-prose table {
+  border-color: #262626 !important;
+}
+
+article th {
+  background-color: #0a0a0a !important;
+  color: white !important;
 }
 
 /* Scrollbar */
