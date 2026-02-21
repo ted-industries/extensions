@@ -1,0 +1,15 @@
+{
+    "name": "ted-extensions",
+    "version": "0.1.0",
+    "description": "Extension registry and marketplace for the ted code editor",
+    "private": true,
+    "scripts": {
+        "validate": "bun scripts/validate.ts",
+        "build-index": "bun scripts/build-index.ts",
+        "dev": "bun run --cwd docs dev",
+        "build": "bun run --cwd docs build"
+    },
+    "devDependencies": {
+        "typescript": "^5.7.0"
+    }
+}
