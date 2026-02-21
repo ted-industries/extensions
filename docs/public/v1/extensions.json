@@ -29,22 +29,21 @@
     ],
     "downloads": 0
   },
-  // example of external extension
-  // {
-  //   "name": "ted-git-blame",
-  //   "displayName": "Git Blame",
-  //   "description": "Show git blame information in the editor status bar.",
-  //   "version": "1.0.0",
-  //   "main": "index.js",
-  //   "repository": "https://github.com/ted-industries/ted-git-blame",
-  //   "author": "tomlin7",
-  //   "tags": [
-  //     "git",
-  //     "blame",
-  //     "source-control"
-  //   ],
-  //   "downloads": 0
-  // },
+  {
+    "name": "ted-git-blame",
+    "displayName": "Git Blame",
+    "description": "Show git blame information in the editor status bar.",
+    "version": "1.0.0",
+    "main": "index.js",
+    "repository": "https://github.com/ted-industries/ted-git-blame",
+    "author": "tomlin7",
+    "tags": [
+      "git",
+      "blame",
+      "source-control"
+    ],
+    "downloads": 0
+  },
   {
     "name": "word-count",
     "displayName": "Word Count",
