@@ -13,6 +13,9 @@ on:
       - 'docs/**'
       - 'scripts/**'
 
+permissions:
+  contents: write
+
 jobs:
   validate:
     name: Validate Extensions
@@ -48,7 +51,7 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: 'chore: rebuild extensions.json [skip ci]'
-          file_pattern: registry/extensions.json
+          file_pattern: 'registry/extensions.json docs/public/v1/extensions.json'
 
   deploy-docs:
     name: Deploy Docs
@@ -71,12 +74,3 @@ jobs:
         run: bun run build
         env:
           NODE_ENV: production
-
-      # Uncomment and configure for Vercel deployment:
-      # - name: Deploy to Vercel
-      #   uses: amondnet/vercel-action@v25
-      #   with:
-      #     vercel-token: ${{ secrets.VERCEL_TOKEN }}
-      #     vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-      #     vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-      #     working-directory: docs

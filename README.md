@@ -55,13 +55,13 @@ to run the marketplace website locally:
 bun dev
 ```
 
-## Static Registry API
+## static registry api
 
-The registry index is served as a static API from the marketplace deployment:
+the registry index is served as a static API from the marketplace deployment:
 
 - **Index:** `https://extensions.ted.tomlin7.com/v1/extensions.json`
 
-This API is used by the ted editor and CLI to discover extensions.
+this api is used by the ted editor and cli to discover extensions.
 
 ## repository structure
 
