@@ -1,0 +1,38 @@
+[
+  {
+    "name": "hello-world",
+    "displayName": "Hello World",
+    "description": "A sample starter extension for ted. Registers a command that shows a welcome notification.",
+    "version": "1.0.0",
+    "author": "tomlin7",
+    "repository": "https://github.com/tomlin7/ted-ext-hello-world",
+    "main": "index.js",
+    "icon": "extensions/hello-world/icon.png",
+    "tags": ["sample", "starter", "notification"],
+    "downloads": 0
+  },
+  {
+    "name": "word-count",
+    "displayName": "Word Count",
+    "description": "Displays a live word and character count for the active file in the status bar.",
+    "version": "1.0.0",
+    "author": "tomlin7",
+    "repository": "https://github.com/tomlin7/ted-ext-word-count",
+    "main": "index.js",
+    "icon": "extensions/word-count/icon.png",
+    "tags": ["statusbar", "writing", "utility"],
+    "downloads": 0
+  },
+  {
+    "name": "quick-open-recent",
+    "displayName": "Quick Open Recent",
+    "description": "Registers a command to list and quickly open recently accessed files.",
+    "version": "1.0.0",
+    "author": "tomlin7",
+    "repository": "https://github.com/tomlin7/ted-ext-quick-open-recent",
+    "main": "index.js",
+    "icon": "extensions/quick-open-recent/icon.png",
+    "tags": ["navigation", "productivity", "files"],
+    "downloads": 0
+  }
+]

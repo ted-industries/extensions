@@ -1,0 +1,17 @@
+{
+    "name": "hello-world",
+    "displayName": "Hello World",
+    "description": "A sample starter extension for ted. Registers a command that shows a welcome notification.",
+    "version": "1.0.0",
+    "author": "tomlin7",
+    "repository": "https://github.com/tomlin7/ted-ext-hello-world",
+    "main": "index.js",
+    "activationEvents": [
+        "onCommand:hello-world.greet"
+    ],
+    "tags": [
+        "sample",
+        "starter",
+        "notification"
+    ]
+}
