@@ -1,0 +1,259 @@
+---
+title: API Reference
+description: Complete reference for the ted extension API (v1)
+---
+
+All API methods are available on the `api` object passed to your `activate(api)` function.
+
+## api.editor
+
+Interact with the editor and open files.
+
+### `api.editor.openFile(path)`
+
+Opens a file in the editor.
+
+```ts
+api.editor.openFile(path: string): void
+```
+
+```js
+api.commands.register("my-ext.open", "Open Config", () => {
+  api.editor.openFile("/home/user/.config/my-app/config.toml");
+});
+```
+
+---
+
+### `api.editor.getActiveFile()`
+
+Returns the absolute path of the currently active file, or `null` if no file is open.
+
+```ts
+api.editor.getActiveFile(): string | null
+```
+
+```js
+const file = api.editor.getActiveFile();
+if (file) {
+  api.editor.showNotification(`Editing: ${file}`, "info");
+}
+```
+
+---
+
+### `api.editor.showNotification(message, type?)`
+
+Shows a toast notification in the editor UI.
+
+```ts
+api.editor.showNotification(message: string, type?: "info" | "warning" | "error"): void
+```
+
+```js
+api.editor.showNotification("File saved!", "info");
+api.editor.showNotification("Parse error on line 3", "error");
+```
+
+---
+
+## api.commands
+
+Register commands that appear in the command palette.
+
+### `api.commands.register(id, label, handler)`
+
+```ts
+api.commands.register(id: string, label: string, handler: () => void): void
+```
+
+- `id` — Unique command ID, namespaced by your extension (e.g. `my-ext.doSomething`)
+- `label` — Human-readable label shown in the command palette
+- `handler` — Called when the command is invoked
+
+```js
+api.commands.register("word-count.refresh", "Word Count: Refresh", () => {
+  const count = getWordCount();
+  api.statusbar.updateItem("word-count.item", `W: ${count}`);
+});
+```
+
+---
+
+## api.sidebar
+
+Register custom panels in the sidebar.
+
+### `api.sidebar.registerPanel(id, label, render)`
+
+```ts
+api.sidebar.registerPanel(
+  id: string,
+  label: string,
+  render: (container: HTMLElement) => void
+): void
+```
+
+- `render` — Called with the panel's container element; populate it with any DOM content
+
+```js
+api.sidebar.registerPanel("my-ext.panel", "My Panel", (el) => {
+  el.innerHTML = `<div style="padding:8px;font-family:monospace">Hello!</div>`;
+});
+```
+
+---
+
+## api.statusbar
+
+Add, update, and remove items in the status bar.
+
+### `api.statusbar.addItem(id, text, options?)`
+
+```ts
+api.statusbar.addItem(
+  id: string,
+  text: string,
+  options?: {
+    tooltip?: string;
+    alignment?: "left" | "right";
+    priority?: number;
+    onClick?: () => void;
+  }
+): void
+```
+
+```js
+api.statusbar.addItem("my-ext.status", "Ready", {
+  tooltip: "My Extension Status",
+  alignment: "right",
+  priority: 50,
+  onClick: () => api.editor.showNotification("Clicked!"),
+});
+```
+
+---
+
+### `api.statusbar.updateItem(id, text)`
+
+Updates the text of an existing status bar item.
+
+```ts
+api.statusbar.updateItem(id: string, text: string): void
+```
+
+```js
+api.statusbar.updateItem("my-ext.status", "Processing...");
+```
+
+---
+
+### `api.statusbar.removeItem(id)`
+
+Removes a status bar item. Called automatically on extension deactivation.
+
+```ts
+api.statusbar.removeItem(id: string): void
+```
+
+---
+
+## api.workspace
+
+Access workspace-level information.
+
+### `api.workspace.getPath()`
+
+Returns the root path of the current workspace, or `null` if no workspace is open.
+
+```ts
+api.workspace.getPath(): string | null
+```
+
+```js
+const root = api.workspace.getPath();
+if (root) {
+  const files = await api.fs.listDir(root);
+}
+```
+
+---
+
+## api.fs
+
+Read and write files on disk.
+
+### `api.fs.readFile(path)`
+
+Reads a file and returns its contents as a UTF-8 string.
+
+```ts
+api.fs.readFile(path: string): Promise<string>
+```
+
+```js
+const content = await api.fs.readFile("/path/to/file.txt");
+```
+
+---
+
+### `api.fs.writeFile(path, content)`
+
+Writes a UTF-8 string to a file. Creates the file if it does not exist.
+
+```ts
+api.fs.writeFile(path: string, content: string): Promise<void>
+```
+
+```js
+await api.fs.writeFile("/path/to/output.txt", "hello world");
+```
+
+---
+
+### `api.fs.listDir(path)`
+
+Lists the entries in a directory.
+
+```ts
+api.fs.listDir(path: string): Promise<string[]>
+```
+
+```js
+const entries = await api.fs.listDir("/path/to/dir");
+// ["file.txt", "subdir/", ...]
+```
+
+---
+
+## api.onEvent
+
+Subscribe to editor lifecycle events.
+
+### `api.onEvent(event, handler)`
+
+```ts
+api.onEvent(event: string, handler: (data: unknown) => void): void
+```
+
+### Available Events
+
+| Event | Payload | Description |
+|-------|---------|-------------|
+| `fileOpened` | `{ path: string }` | A file was opened |
+| `fileSaved` | `{ path: string }` | A file was saved |
+| `fileClose` | `{ path: string }` | A file was closed |
+| `contentChanged` | `{ path: string, content: string }` | Editor content changed |
+| `workspaceOpened` | `{ path: string }` | A workspace folder was opened |
+| `workspaceClosed` | — | The workspace was closed |
+
+```js
+api.onEvent("fileSaved", async ({ path }) => {
+  const content = await api.fs.readFile(path);
+  // do something with the saved content
+});
+
+api.onEvent("workspaceOpened", ({ path }) => {
+  api.editor.showNotification(`Workspace: ${path}`, "info");
+});
+```

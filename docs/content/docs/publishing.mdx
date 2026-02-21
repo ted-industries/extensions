@@ -1,0 +1,114 @@
+---
+title: Publishing an Extension
+description: How to submit your extension to the ted-extensions registry
+---
+
+Publishing your extension makes it available to all ted users via the marketplace and the `ted ext install` command.
+
+## Overview
+
+The ted-extensions registry is a GitHub repository. Publishing is done via a Pull Request — no accounts or tokens required beyond a GitHub account.
+
+## Step 1: Fork the Registry
+
+Go to [github.com/tomlin7/ted-extensions](https://github.com/tomlin7/ted-extensions) and click **Fork**.
+
+Clone your fork locally:
+
+```bash
+git clone https://github.com/<your-username>/ted-extensions
+cd ted-extensions
+```
+
+## Step 2: Add Your Extension
+
+Create a new folder under `registry/extensions/<your-extension-name>/`:
+
+```
+registry/
+└── extensions/
+    └── your-extension-name/
+        ├── package.json   # Required
+        ├── index.js       # Required (must match "main" field)
+        ├── README.md      # Recommended
+        └── icon.png       # Optional — 128×128 PNG
+```
+
+### package.json Requirements
+
+Your `package.json` must include these fields:
+
+```json
+{
+  "name": "your-extension-name",
+  "displayName": "Your Extension",
+  "description": "A short description of what your extension does",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "your-github-username",
+  "repository": "https://github.com/your-username/your-extension-repo",
+  "tags": ["productivity", "utility"]
+}
+```
+
+| Field | Required | Notes |
+|-------|----------|-------|
+| `name` | ✓ | Must match the folder name exactly |
+| `version` | ✓ | Semver format |
+| `displayName` | ✓ | Shown in the marketplace |
+| `main` | ✓ | Entry JS file (relative to extension folder) |
+| `description` | recommended | Shown in search results |
+| `author` | recommended | Your GitHub username |
+| `repository` | recommended | Link to your extension's source |
+| `tags` | recommended | Helps users find your extension |
+
+## Step 3: Validate Locally
+
+Run the validator before opening a PR:
+
+```bash
+# From the repo root
+bun scripts/validate.ts
+```
+
+All checks must pass:
+- ✓ Required fields present
+- ✓ Extension name matches folder name
+- ✓ `main` file exists
+- ✓ No duplicate extension names
+- ✓ Valid semver version
+
+## Step 4: Open a Pull Request
+
+```bash
+git add registry/extensions/your-extension-name/
+git commit -m "feat: add your-extension-name extension"
+git push origin main
+```
+
+Then open a Pull Request against `tomlin7/ted-extensions`. The CI workflow will automatically run the validator on your PR.
+
+## Step 5: After Merge
+
+Once your PR is merged:
+1. The `build-index.ts` script rebuilds `registry/extensions.json`
+2. The marketplace website rebuilds and shows your extension
+3. Users can install it with:
+
+```bash
+ted ext install your-extension-name
+```
+
+## Extension Quality Guidelines
+
+- **Keep it focused** — one extension, one purpose
+- **Handle errors gracefully** — catch all async errors
+- **Avoid global state** — clean up in `deactivate()`
+- **Test locally** before submitting — copy your folder to `~/.ted/extensions/` and restart ted
+
+## Updating Your Extension
+
+To publish a new version:
+1. Bump the `version` field in `package.json` (semver)
+2. Update `README.md` with a changelog entry
+3. Open a new PR with your changes

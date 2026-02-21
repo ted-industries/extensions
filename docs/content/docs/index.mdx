@@ -1,0 +1,95 @@
+---
+title: Getting Started
+description: Build your first extension for the ted code editor
+---
+
+## What is a ted Extension?
+
+Extensions are plain JavaScript folders that extend the ted editor with new commands, status bar items, sidebar panels, and more. They live in `~/.ted/extensions/` and are loaded automatically on startup.
+
+## Folder Structure
+
+Every extension is a folder with this shape:
+
+```
+my-extension/
+├── package.json   # Manifest
+└── index.js       # Entry point
+```
+
+You can optionally add:
+- `README.md` — shown on the marketplace
+- `icon.png` — 128×128 icon shown in the marketplace
+
+## package.json Manifest
+
+```json
+{
+  "name": "my-extension",
+  "displayName": "My Extension",
+  "description": "What my extension does",
+  "version": "1.0.0",
+  "main": "index.js",
+  "activationEvents": ["onStartup"]
+}
+```
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| `name` | ✓ | Unique identifier (kebab-case) |
+| `version` | ✓ | Semver string, e.g. `1.0.0` |
+| `displayName` | ✓ | Human-readable name |
+| `main` | ✓ | Entry JS file, relative to the extension root |
+| `description` | — | Short description (shown in the marketplace) |
+| `activationEvents` | — | When to activate the extension |
+
+## Extension Entry Point
+
+Your `index.js` must export an `activate` function, and optionally a `deactivate` function:
+
+```js
+function activate(api) {
+  // Called when ted loads your extension.
+  // Use `api` to interact with the editor.
+  api.editor.showNotification("My extension is active!", "info");
+}
+
+function deactivate() {
+  // Called when the extension is unloaded.
+  // Clean up timers, listeners, etc.
+}
+
+module.exports = { activate, deactivate };
+```
+
+## Installing Locally
+
+1. Create your extension folder in `~/.ted/extensions/<name>/`
+2. Add `package.json` and `index.js`
+3. Restart ted — your extension will be loaded automatically
+
+```
+~/.ted/
+└── extensions/
+    └── my-extension/
+        ├── package.json
+        └── index.js
+```
+
+## Activation Events
+
+| Event | When it fires |
+|-------|---------------|
+| `onStartup` | When ted starts |
+| `onCommand:<id>` | When a specific command is invoked |
+| `onEditorChange` | When the active file changes |
+
+If `activationEvents` is omitted, the extension activates on startup.
+
+## Next Steps
+
+<Cards>
+  <Card title="API Reference" href="/docs/api-reference" description="Full API docs for the ted extension API" />
+  <Card title="Publishing" href="/docs/publishing" description="Publish your extension to the marketplace" />
+  <Card title="Examples" href="/docs/examples" description="Browse real extension code" />
+</Cards>

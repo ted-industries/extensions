@@ -1,0 +1,9 @@
+{
+    "title": "Developer Docs",
+    "pages": [
+        "index",
+        "api-reference",
+        "publishing",
+        "examples"
+    ]
+}

@@ -1,0 +1,195 @@
+---
+title: Examples
+description: Real extension code with commentary — learn by example
+---
+
+The three seed extensions in this registry demonstrate the core extension patterns. Here's a deep dive into each one.
+
+## hello-world — Registering Commands
+
+**Source:** [`registry/extensions/hello-world/`](https://github.com/tomlin7/ted-extensions/tree/main/registry/extensions/hello-world)
+
+The simplest possible extension: register a command and show a notification.
+
+```js
+function activate(api) {
+  api.commands.register(
+    "hello-world.greet",       // unique command ID
+    "Hello World: Show Greeting",  // label in command palette
+    () => {
+      const file = api.editor.getActiveFile();
+      const msg = file
+        ? `Active file: ${file}`
+        : "Hello from ted extensions!";
+      api.editor.showNotification(msg, "info");
+    }
+  );
+}
+
+function deactivate() {}
+
+module.exports = { activate, deactivate };
+```
+
+**Key patterns:**
+- Command IDs are namespaced: `<extension-name>.<command>`
+- `getActiveFile()` returns `null` when no file is open — always handle this
+- `showNotification` accepts `"info"`, `"warning"`, or `"error"`
+
+---
+
+## word-count — Status Bar Integration
+
+**Source:** [`registry/extensions/word-count/`](https://github.com/tomlin7/ted-extensions/tree/main/registry/extensions/word-count)
+
+Adds a live word/character counter to the status bar using `api.statusbar` and `api.onEvent`.
+
+```js
+const ITEM_ID = "word-count.statusbar";
+
+function countWords(text) {
+  if (!text?.trim()) return { words: 0, chars: 0 };
+  return {
+    words: text.trim().split(/\s+/).length,
+    chars: text.length,
+  };
+}
+
+function activate(api) {
+  // Add the initial status bar item
+  api.statusbar.addItem(ITEM_ID, "W: 0  C: 0", {
+    tooltip: "Word Count",
+    alignment: "right",
+    priority: 100,
+  });
+
+  // Update whenever content changes (live)
+  api.onEvent("contentChanged", (data) => {
+    const { words, chars } = countWords(data.content);
+    api.statusbar.updateItem(ITEM_ID, `W: ${words}  C: ${chars}`);
+  });
+
+  // Also update when a file is opened (reads from disk)
+  api.onEvent("fileOpened", async ({ path }) => {
+    const content = await api.fs.readFile(path);
+    const { words, chars } = countWords(content);
+    api.statusbar.updateItem(ITEM_ID, `W: ${words}  C: ${chars}`);
+  });
+
+  // Reset when no file is active
+  api.onEvent("fileClose", () => {
+    api.statusbar.updateItem(ITEM_ID, "W: 0  C: 0");
+  });
+}
+
+module.exports = { activate };
+```
+
+**Key patterns:**
+- `addItem` once in `activate`, then use `updateItem` for changes
+- Multiple `onEvent` subscriptions for different triggers
+- `api.fs.readFile` is async — use `async/await`
+- Status bar items are cleaned up automatically on deactivation
+
+---
+
+## quick-open-recent — File History + Commands
+
+**Source:** [`registry/extensions/quick-open-recent/`](https://github.com/tomlin7/ted-extensions/tree/main/registry/extensions/quick-open-recent)
+
+Tracks recently opened files in memory and exposes them via a command.
+
+```js
+const MAX_RECENT = 10;
+const recentFiles = [];
+
+function addRecent(path) {
+  const idx = recentFiles.indexOf(path);
+  if (idx !== -1) recentFiles.splice(idx, 1);  // remove duplicate
+  recentFiles.unshift(path);                    // add to front
+  if (recentFiles.length > MAX_RECENT) recentFiles.pop();
+}
+
+function activate(api) {
+  // Track every opened/saved file
+  api.onEvent("fileOpened", ({ path }) => addRecent(path));
+  api.onEvent("fileSaved",  ({ path }) => addRecent(path));
+
+  api.commands.register(
+    "quick-open-recent.open",
+    "Quick Open: Recent Files",
+    () => {
+      if (!recentFiles.length) {
+        api.editor.showNotification("No recent files yet.", "info");
+        return;
+      }
+      // Open the most recent file automatically
+      api.editor.openFile(recentFiles[0]);
+    }
+  );
+}
+
+function deactivate() {
+  recentFiles.length = 0;  // free memory
+}
+
+module.exports = { activate, deactivate };
+```
+
+**Key patterns:**
+- In-memory state is fine for session data; use `api.fs.writeFile` for persistence
+- Always clear state in `deactivate()` to avoid memory leaks
+- Commands can call `api.editor.openFile` directly
+
+---
+
+## Common Patterns Summary
+
+### Error Handling
+
+Always wrap `api.fs` calls in try/catch — the file might not exist or the path might be invalid:
+
+```js
+api.onEvent("fileOpened", async ({ path }) => {
+  try {
+    const content = await api.fs.readFile(path);
+    // process content
+  } catch (err) {
+    api.editor.showNotification(`Error reading file: ${err.message}`, "error");
+  }
+});
+```
+
+### Avoiding Duplicate Registrations
+
+If your extension can be re-activated (e.g., during testing), guard against duplicate registrations:
+
+```js
+let activated = false;
+
+function activate(api) {
+  if (activated) return;
+  activated = true;
+  // ... register commands, etc.
+}
+```
+
+### Persisting Data
+
+Use `api.fs` to persist data between sessions:
+
+```js
+const DATA_FILE = `${api.workspace.getPath()}/.ted/my-extension-data.json`;
+
+async function load() {
+  try {
+    return JSON.parse(await api.fs.readFile(DATA_FILE));
+  } catch {
+    return {};
+  }
+}
+
+async function save(data) {
+  await api.fs.writeFile(DATA_FILE, JSON.stringify(data, null, 2));
+}
+```
