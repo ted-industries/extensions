@@ -5,11 +5,12 @@
  * registry/extensions.json(the master index).
  */
 
-import { readFileSync, writeFileSync, existsSync, readdirSync, statSync } from "fs";
+import { readFileSync, writeFileSync, existsSync, readdirSync, statSync, mkdirSync, cpSync, rmSync } from "fs";
 import { join, resolve } from "path";
 
 const REGISTRY_DIR = resolve(import.meta.dir, "../registry/extensions");
 const OUTPUT_FILE = resolve(import.meta.dir, "../registry/extensions.json");
+const PUBLIC_DIR = resolve(import.meta.dir, "../docs/public/v1");
 
 interface ExtensionEntry {
     name: string;
@@ -25,6 +26,12 @@ interface ExtensionEntry {
 }
 
 const extensions: ExtensionEntry[] = [];
+
+// Ensure public directory exists
+if (existsSync(PUBLIC_DIR)) {
+    rmSync(PUBLIC_DIR, { recursive: true, force: true });
+}
+mkdirSync(PUBLIC_DIR, { recursive: true });
 
 const entries = readdirSync(REGISTRY_DIR).filter((entry) => {
     return statSync(join(REGISTRY_DIR, entry)).isDirectory();
@@ -49,11 +56,6 @@ for (const extDir of entries) {
         continue;
     }
 
-    // Resolve icon path relative to registry root
-    const iconRelative = existsSync(join(extPath, "icon.png"))
-        ? `extensions/${extDir}/icon.png`
-        : undefined;
-
     const entry: ExtensionEntry = {
         name: (manifest.name as string) || extDir,
         displayName: (manifest.displayName as string) || extDir,
@@ -62,7 +64,9 @@ for (const extDir of entries) {
         main: (manifest.main as string) || "index.js",
         ...(manifest.author ? { author: manifest.author as string } : {}),
         ...(manifest.repository ? { repository: manifest.repository as string } : {}),
-        ...(iconRelative ? { icon: iconRelative } : {}),
+        // For the public index, we point icons to the repository raw URLs or marketplace static paths
+        // But the user only wants the JSON, so we just maintain metadata as intended by the manifest
+        ...(manifest.icon ? { icon: manifest.icon as string } : {}),
         tags: (manifest.tags as string[]) || [],
         downloads: 0,
     };
@@ -74,7 +78,11 @@ for (const extDir of entries) {
 // Sort alphabetically by name
 extensions.sort((a, b) => a.name.localeCompare(b.name));
 
-// Write output
-writeFileSync(OUTPUT_FILE, JSON.stringify(extensions, null, 2) + "\n");
+// Write output to both locations
+const indexContent = JSON.stringify(extensions, null, 2) + "\n";
+writeFileSync(OUTPUT_FILE, indexContent);
+writeFileSync(join(PUBLIC_DIR, "extensions.json"), indexContent);
 
-console.log(`\n✅ Wrote ${extensions.length} extension(s) to registry/extensions.json\n`);
+console.log(`\n✅ Wrote ${extensions.length} extension(s) to:`);
+console.log(`   - registry/extensions.json`);
+console.log(`   - docs/public/v1/extensions.json\n`);
