@@ -1,0 +1,16 @@
+[
+    {
+        "name": "ted-git-blame",
+        "displayName": "Git Blame",
+        "description": "Show git blame information in the editor status bar.",
+        "version": "1.0.0",
+        "main": "index.js",
+        "repository": "https://github.com/ted-industries/ted-git-blame",
+        "author": "tomlin7",
+        "tags": [
+            "git",
+            "blame",
+            "source-control"
+        ]
+    }
+]

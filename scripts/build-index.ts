@@ -39,6 +39,9 @@ const entries = readdirSync(REGISTRY_DIR).filter((entry) => {
 
 console.log(`\n📦 Building index from ${entries.length} extension(s)...\n`);
 
+const EXTERNAL_FILE = resolve(import.meta.dir, "../registry/external.json");
+
+// Add local extensions
 for (const extDir of entries) {
     const extPath = join(REGISTRY_DIR, extDir);
     const manifestPath = join(extPath, "package.json");
@@ -64,8 +67,6 @@ for (const extDir of entries) {
         main: (manifest.main as string) || "index.js",
         ...(manifest.author ? { author: manifest.author as string } : {}),
         ...(manifest.repository ? { repository: manifest.repository as string } : {}),
-        // For the public index, we point icons to the repository raw URLs or marketplace static paths
-        // But the user only wants the JSON, so we just maintain metadata as intended by the manifest
         ...(manifest.icon ? { icon: manifest.icon as string } : {}),
         tags: (manifest.tags as string[]) || [],
         downloads: 0,
@@ -73,6 +74,40 @@ for (const extDir of entries) {
 
     extensions.push(entry);
     console.log(`  ✓ ${entry.name}@${entry.version}`);
+}
+
+// Add external extensions
+if (existsSync(EXTERNAL_FILE)) {
+    try {
+        const externalData = JSON.parse(readFileSync(EXTERNAL_FILE, "utf-8"));
+        if (Array.isArray(externalData)) {
+            console.log(`\n🌐 Adding ${externalData.length} external extension(s)...\n`);
+            for (const ext of externalData) {
+                if (!ext.name || !ext.repository) {
+                    console.warn(`  ⚠  Skipping external entry: missing "name" or "repository"`);
+                    continue;
+                }
+
+                const entry: ExtensionEntry = {
+                    name: ext.name,
+                    displayName: ext.displayName || ext.name,
+                    description: ext.description || "",
+                    version: ext.version || "0.0.1",
+                    main: ext.main || "index.js",
+                    repository: ext.repository,
+                    author: ext.author,
+                    tags: ext.tags || [],
+                    downloads: 0,
+                    ...ext
+                };
+
+                extensions.push(entry);
+                console.log(`  ✓ ${entry.name} (remote)`);
+            }
+        }
+    } catch (e) {
+        console.error(`  ✗ Failed to read external.json: ${(e as Error).message}`);
+    }
 }
 
 // Sort alphabetically by name

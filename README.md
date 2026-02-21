@@ -38,6 +38,27 @@ see the [publishing guide](https://extensions.ted.tomlin7.com/docs/publishing) f
 3. run `bun validate` — all checks must pass
 4. open a pull request
 
+### via external repository
+
+if you prefer to host your extension in its own repository:
+
+1. fork this repository
+2. add your extension metadata to `registry/external.json`:
+   ```json
+   {
+     "name": "your-extension-name",
+     "displayName": "Your Extension",
+     "description": "Short description",
+     "version": "1.0.0",
+     "main": "index.js",
+     "repository": "https://github.com/user/your-repo",
+     "author": "your-username",
+     "tags": ["utility", "sample"]
+   }
+   ```
+3. run `bun validate`
+4. open a pull request
+
 ci will validate your extension automatically. once merged, the marketplace updates within minutes.
 
 ## development

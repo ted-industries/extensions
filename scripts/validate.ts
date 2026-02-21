@@ -34,7 +34,9 @@ if (entries.length === 0) {
     process.exit(0);
 }
 
-console.log(`\n🔍 Validating ${entries.length} extension(s)...\n`);
+const EXTERNAL_FILE = resolve(import.meta.dir, "../registry/external.json");
+
+console.log(`\n🔍 Validating ${entries.length} local extension(s)...\n`);
 
 for (const extDir of entries) {
     const extPath = join(REGISTRY_DIR, extDir);
@@ -42,41 +44,56 @@ for (const extDir of entries) {
 
     console.log(`→ ${extDir}`);
 
-    // Check manifest exists
     if (!existsSync(manifestPath)) {
         fail(extDir, "Missing package.json");
         continue;
     }
 
-    // Parse manifest
-    let manifest: Record<string, unknown>;
+    let manifest: Record<string, any>;
     try {
-        const raw = readFileSync(manifestPath, "utf-8");
-        manifest = JSON.parse(raw);
+        manifest = JSON.parse(readFileSync(manifestPath, "utf-8"));
     } catch (e) {
-        fail(extDir, `Invalid JSON in package.json: ${(e as Error).message}`);
+        fail(extDir, `Invalid JSON: ${(e as Error).message}`);
         continue;
     }
 
+    validateManifest(extDir, manifest, true, extPath);
+}
+
+// Validate external extensions
+if (existsSync(EXTERNAL_FILE)) {
+    try {
+        const externalData = JSON.parse(readFileSync(EXTERNAL_FILE, "utf-8"));
+        if (Array.isArray(externalData)) {
+            console.log(`\n🌐 Validating ${externalData.length} external extension(s)...\n`);
+            for (const ext of externalData) {
+                const id = ext.name || "unknown-external";
+                console.log(`→ ${id} (external)`);
+
+                if (!ext.repository) {
+                    fail(id, "Missing repository link");
+                }
+
+                validateManifest(id, ext, false);
+            }
+        }
+    } catch (e) {
+        fail("external.json", `Failed to parse: ${(e as Error).message}`);
+    }
+}
+
+function validateManifest(id: string, manifest: Record<string, any>, isLocal: boolean, localPath?: string) {
     // Validate required fields
     for (const field of REQUIRED_FIELDS) {
         if (!manifest[field] || typeof manifest[field] !== "string") {
-            fail(extDir, `Missing or invalid required field: "${field}"`);
+            fail(id, `Missing or invalid required field: "${field}"`);
         }
     }
 
-    // Validate name matches directory
-    if (manifest.name && manifest.name !== extDir) {
-        fail(
-            extDir,
-            `Extension name "${manifest.name}" does not match directory "${extDir}"`
-        );
-    }
-
-    // Validate version format (semver-like)
+    // Validate version format
     if (manifest.version && typeof manifest.version === "string") {
         if (!/^\d+\.\d+\.\d+/.test(manifest.version)) {
-            fail(extDir, `Invalid version format: "${manifest.version}" (expected semver)`);
+            fail(id, `Invalid version format: "${manifest.version}"`);
         }
     }
 
@@ -84,27 +101,31 @@ for (const extDir of entries) {
     if (manifest.name) {
         const name = manifest.name as string;
         if (seenNames.has(name)) {
-            fail(extDir, `Duplicate extension name: "${name}"`);
+            fail(id, `Duplicate extension name: "${name}"`);
         } else {
             seenNames.add(name);
         }
     }
 
-    // Check main file exists
-    if (manifest.main && typeof manifest.main === "string") {
-        const mainPath = join(extPath, manifest.main as string);
-        if (!existsSync(mainPath)) {
-            fail(extDir, `main file "${manifest.main}" not found`);
-        } else {
-            pass(`main file exists: ${manifest.main}`);
+    // Local-only checks
+    if (isLocal && localPath) {
+        // Name matches directory
+        if (manifest.name && manifest.name !== id) {
+            fail(id, `Name "${manifest.name}" does not match directory "${id}"`);
         }
-    }
 
-    // Warn if README is missing (non-fatal)
-    if (!existsSync(join(extPath, "README.md"))) {
-        console.warn(`  ⚠  No README.md found (recommended)`);
-    } else {
-        pass("README.md found");
+        // Main file exists
+        if (manifest.main && typeof manifest.main === "string") {
+            const mainPath = join(localPath, manifest.main);
+            if (!existsSync(mainPath)) {
+                fail(id, `main file "${manifest.main}" not found`);
+            }
+        }
+
+        // README warning
+        if (!existsSync(join(localPath, "README.md"))) {
+            console.warn(`  ⚠  [${id}] No README.md found`);
+        }
     }
 }
 
@@ -114,6 +135,6 @@ if (errors > 0) {
     console.error(`❌ Validation failed with ${errors} error(s).`);
     process.exit(1);
 } else {
-    console.log(`✅ All ${entries.length} extension(s) passed validation.`);
+    console.log(`✅ All extensions passed validation.`);
     process.exit(0);
 }
