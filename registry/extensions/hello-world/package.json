@@ -4,7 +4,7 @@
     "description": "A sample starter extension for ted. Registers a command that shows a welcome notification.",
     "version": "1.0.0",
     "author": "tomlin7",
-    "repository": "https://github.com/tomlin7/ted-ext-hello-world",
+    "repository": "https://github.com/ted-industries/extensions/tree/main/registry/extensions/hello-world",
     "main": "index.js",
     "activationEvents": [
         "onCommand:hello-world.greet"

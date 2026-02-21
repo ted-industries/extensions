@@ -4,7 +4,7 @@
     "description": "Registers a command to list and quickly open recently accessed files.",
     "version": "1.0.0",
     "author": "tomlin7",
-    "repository": "https://github.com/tomlin7/ted-ext-quick-open-recent",
+    "repository": "https://github.com/ted-industries/extensions/tree/main/registry/extensions/quick-open-recent",
     "main": "index.js",
     "activationEvents": [
         "onCommand:quick-open-recent.open"

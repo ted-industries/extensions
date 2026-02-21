@@ -1,6 +1,6 @@
 # word count
 
-a [ted](https://github.com/tomlin7/ted) extension that shows a live word and character count for the active file in the status bar.
+a [ted](https://github.com/ted-industries/ted) extension that shows a live word and character count for the active file in the status bar.
 
 ## features
 

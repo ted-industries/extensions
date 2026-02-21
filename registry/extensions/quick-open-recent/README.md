@@ -1,6 +1,6 @@
 # quick open recent
 
-a [ted](https://github.com/tomlin7/ted) extension that tracks your recently opened files and lets you jump back to them instantly.
+a [ted](https://github.com/ted-industries/ted) extension that tracks your recently opened files and lets you jump back to them instantly.
 
 ## features
 

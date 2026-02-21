@@ -1,6 +1,6 @@
 # hello world
 
-a minimal starter extension for [ted](https://github.com/tomlin7/ted). use this as a template when building your own extensions.
+a minimal starter extension for [ted](https://github.com/ted-industries/ted). use this as a template when building your own extensions.
 
 ## features
 

@@ -1,23 +1,23 @@
 ---
 title: Publishing an Extension
-description: How to submit your extension to the ted-extensions registry
+description: How to submit your extension to the extensions registry
 ---
 
 Publishing your extension makes it available to all ted users via the marketplace and the `ted ext install` command.
 
 ## Overview
 
-The ted-extensions registry is a GitHub repository. Publishing is done via a Pull Request — no accounts or tokens required beyond a GitHub account.
+The extensions registry is a GitHub repository. Publishing is done via a Pull Request — no accounts or tokens required beyond a GitHub account.
 
 ## Step 1: Fork the Registry
 
-Go to [github.com/tomlin7/ted-extensions](https://github.com/tomlin7/ted-extensions) and click **Fork**.
+Go to [github.com/ted-industries/extensions](https://github.com/ted-industries/extensions) and click **Fork**.
 
 Clone your fork locally:
 
 ```bash
-git clone https://github.com/<your-username>/ted-extensions
-cd ted-extensions
+git clone https://github.com/<your-username>/extensions
+cd extensions
 ```
 
 ## Step 2: Add Your Extension
@@ -86,7 +86,7 @@ git commit -m "feat: add your-extension-name extension"
 git push origin main
 ```
 
-Then open a Pull Request against `tomlin7/ted-extensions`. The CI workflow will automatically run the validator on your PR.
+Then open a Pull Request against `ted-industries/extensions`. The CI workflow will automatically run the validator on your PR.
 
 ## Step 5: After Merge
 

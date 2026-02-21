@@ -4,7 +4,7 @@
     "description": "Displays a live word and character count for the active file in the status bar.",
     "version": "1.0.0",
     "author": "tomlin7",
-    "repository": "https://github.com/tomlin7/ted-ext-word-count",
+    "repository": "https://github.com/ted-industries/extensions/tree/main/registry/extensions/word-count",
     "main": "index.js",
     "activationEvents": [
         "onEditorChange"

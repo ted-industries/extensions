@@ -207,7 +207,7 @@ export default function MarketplacePage({
                     <p className="text-neutral-500 text-sm max-w-md">
                         Browse and install extensions for the{' '}
                         <a
-                            href="https://github.com/tomlin7/ted"
+                            href="https://github.com/ted-industries/ted"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-neutral-400 hover:text-white transition-colors underline underline-offset-2"
@@ -282,7 +282,7 @@ export default function MarketplacePage({
                             docs →
                         </Link>
                         <a
-                            href="https://github.com/tomlin7/ted-extensions"
+                            href="https://github.com/ted-industries/extensions"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-[10px] font-mono uppercase tracking-widest text-neutral-600 hover:text-white transition-colors"
