@@ -45,6 +45,20 @@
     "downloads": 0
   },
   {
+    "name": "ted-icons",
+    "displayName": "Ted Default Icons",
+    "description": "Default file and folder icons for Ted editor.",
+    "version": "1.0.0",
+    "main": "index.js",
+    "author": "tomlin7",
+    "repository": "https://github.com/ted-industries/extensions/tree/main/registry/extensions/ted-icons",
+    "tags": [
+      "theme",
+      "icons"
+    ],
+    "downloads": 0
+  },
+  {
     "name": "word-count",
     "displayName": "Word Count",
     "description": "Displays a live word and character count for the active file in the status bar.",
@@ -56,20 +70,6 @@
       "statusbar",
       "writing",
       "utility"
-    ],
-    "downloads": 0
-  },
-  {
-    "name": "ted-icons",
-    "displayName": "Ted Default Icons",
-    "description": "Default file and folder icons for Ted editor.",
-    "version": "1.0.0",
-    "main": "index.js",
-    "author": "tomlin7",
-    "repository": "https://github.com/ted-industries/extensions/tree/main/registry/extensions/ted-icons",
-    "tags": [
-      "theme",
-      "icons"
     ],
     "downloads": 0
   }
