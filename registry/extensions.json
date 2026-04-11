@@ -82,19 +82,5 @@
       "utility"
     ],
     "downloads": 0
-  },
-  {
-    "name": "material-icon-theme",
-    "displayName": "Material Icon Theme",
-    "description": "High quality Material Design icons for files and folders.",
-    "version": "1.3.1",
-    "main": "index.js",
-    "author": "Ted Industries",
-    "repository": "https://github.com/ted-industries/extensions/tree/main/registry/extensions/material-icon-theme",
-    "tags": [
-      "theme",
-      "icons"
-    ],
-    "downloads": 0
   }
 ]
