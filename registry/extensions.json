@@ -80,6 +80,7 @@
     "version": "1.3.1",
     "main": "index.js",
     "author": "Ted Industries",
+    "repository": "https://github.com/ted-industries/extensions/tree/main/registry/extensions/material-icon-theme",
     "tags": [
       "theme",
       "icons"
