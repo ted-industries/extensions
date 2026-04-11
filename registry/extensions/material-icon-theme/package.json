@@ -5,6 +5,11 @@
   "main": "index.js",
   "description": "Material Design Icons for Ted",
   "author": "Ted Industries",
+  "repository": "https://github.com/ted-industries/extensions/tree/main/registry/extensions/material-icon-theme",
+  "tags": [
+    "theme",
+    "icons"
+  ],
   "scripts": {
     "build": "npx tsx src/build.ts"
   },
