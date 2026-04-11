@@ -1,0 +1,10 @@
+{
+    "name": "ted-icons",
+    "displayName": "Ted Default Icons",
+    "description": "Default file and folder icons for Ted editor.",
+    "version": "1.0.0",
+    "main": "index.js",
+    "author": "tomlin7",
+    "repository": "https://github.com/ted-industries/extensions/tree/main/registry/extensions/ted-icons",
+    "tags": ["theme", "icons"]
+}
