@@ -1,0 +1,7 @@
+id = "material-icon-theme"
+name = "Material Icon Theme"
+version = "1.3.1"
+schema_version = 1
+authors = ["Ted Industries <support@ted.tomlin7.com>"]
+description = "Material Design icons for Ted"
+repository = "https://github.com/ted-industries/extensions"

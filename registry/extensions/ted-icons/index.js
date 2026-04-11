@@ -11,7 +11,7 @@ const SVGS = {
 };
 
 function activate(api) {
-    api.icons.registerFileIconProvider((path, is_dir) => {
+    api.icons.registerFileIconProvider((path, is_dir, is_expanded) => {
         if (is_dir) {
             return SVGS.folder;
         }
